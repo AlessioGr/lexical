@@ -6,13 +6,13 @@
  *
  */
 
-import {$createCodeNode, CodeNode} from '@lexical/code';
+import {CodeNode} from '@lexical/code';
 import {createHeadlessEditor} from '@lexical/headless';
 import {$generateHtmlFromNodes, $generateNodesFromDOM} from '@lexical/html';
 import {LinkNode} from '@lexical/link';
 import {ListItemNode, ListNode} from '@lexical/list';
 import {HeadingNode, QuoteNode} from '@lexical/rich-text';
-import {$createTextNode, $getRoot, $insertNodes} from 'lexical';
+import {$getRoot, $insertNodes} from 'lexical';
 
 import {
   $convertFromMarkdownString,
@@ -22,35 +22,6 @@ import {
   Transformer,
   TRANSFORMERS,
 } from '../..';
-import {MultilineElementTransformer} from '../../MarkdownTransformers';
-
-// Matches html within a mdx file
-const MDX_HTML_TRANSFORMER: MultilineElementTransformer = {
-  dependencies: [CodeNode],
-  export: (node) => {
-    if (node.getTextContent().startsWith('From HTML:')) {
-      return `<MyComponent>${node
-        .getTextContent()
-        .replace('From HTML: ', '')}</MyComponent>`;
-    }
-    return null; // Run next transformer
-  },
-  regExpEnd: /<\/(\w+)\s*>/,
-  regExpStart: /<(\w+)[^>]*>/,
-  replace: (rootNode, startMatch, endMatch, linesInBetween) => {
-    if (startMatch[1] === 'MyComponent') {
-      const codeBlockNode = $createCodeNode(startMatch[1]);
-      const textNode = $createTextNode(
-        'From HTML: ' + linesInBetween.join('\n'),
-      );
-      codeBlockNode.append(textNode);
-      rootNode.append(codeBlockNode);
-      return;
-    }
-    return false; // Run next transformer
-  },
-  type: 'multilineElement',
-};
 
 describe('Markdown', () => {
   type Input = Array<{
@@ -61,8 +32,6 @@ describe('Markdown', () => {
     shouldPreserveNewLines?: true;
     customTransformers?: Transformer[];
   }>;
-
-  const URL = 'https://lexical.dev';
 
   const IMPORT_AND_EXPORT: Input = [
     {
