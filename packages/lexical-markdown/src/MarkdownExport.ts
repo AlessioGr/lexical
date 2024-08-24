@@ -18,7 +18,6 @@ import {
 
 import {
   ElementTransformer,
-  MultilineElementTransformer,
   TextFormatTransformer,
   TextMatchTransformer,
   Transformer,
@@ -33,7 +32,6 @@ export function createMarkdownExport(
   shouldPreserveNewLines: boolean = false,
 ): (node?: ElementNode) => string {
   const byType = transformersByType(transformers);
-  const elementTransformers = [...byType.multilineElement, ...byType.element];
   const isNewlineDelimited = !shouldPreserveNewLines;
 
   // Export only uses text formats that are responsible for single format
@@ -50,7 +48,7 @@ export function createMarkdownExport(
       const child = children[i];
       const result = exportTopLevelElements(
         child,
-        elementTransformers,
+        byType.element,
         textFormatTransformers,
         byType.textMatch,
       );
@@ -75,14 +73,11 @@ export function createMarkdownExport(
 
 function exportTopLevelElements(
   node: LexicalNode,
-  elementTransformers: Array<ElementTransformer | MultilineElementTransformer>,
+  elementTransformers: Array<ElementTransformer>,
   textTransformersIndex: Array<TextFormatTransformer>,
   textMatchTransformers: Array<TextMatchTransformer>,
 ): string | null {
   for (const transformer of elementTransformers) {
-    if (!transformer.export) {
-      continue;
-    }
     const result = transformer.export(node, (_node) =>
       exportChildren(_node, textTransformersIndex, textMatchTransformers),
     );
