@@ -352,6 +352,8 @@ function findOutermostMatch(
 
   return null;
 }
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const a = 1;
 
 function createTextFormatTransformersIndex(
