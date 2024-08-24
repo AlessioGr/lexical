@@ -473,7 +473,7 @@ test.describe('Hashtags', () => {
     page,
   }) => {
     await focusEditor(page);
-    await page.keyboard.type('```markdown #hello#invalid #a #b');
+    await page.keyboard.type('```markdown #hello#invalid #a #b', {delay: 500});
 
     await assertHTML(
       page,
