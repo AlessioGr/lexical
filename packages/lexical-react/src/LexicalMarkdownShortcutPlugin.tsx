@@ -47,7 +47,11 @@ export function MarkdownShortcutPlugin({
 }>): null {
   const [editor] = useLexicalComposerContext();
 
+  console.log('MarkdownShortcut > register > 1');
+
   useEffect(() => {
+    console.log('MarkdownShortcut > register > 2');
+
     return registerMarkdownShortcuts(editor, transformers);
   }, [editor, transformers]);
 

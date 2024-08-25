@@ -36,6 +36,7 @@ function runElementTransformers(
   elementTransformers: ReadonlyArray<ElementTransformer>,
 ): boolean {
   const grandParentNode = parentNode.getParent();
+  console.log('MarkdownShortcut > update > 6', elementTransformers);
 
   if (
     !$isRootOrShadowRoot(grandParentNode) ||
@@ -59,7 +60,11 @@ function runElementTransformers(
   for (const {regExp, replace} of elementTransformers) {
     const match = textContent.match(regExp);
 
+    console.log('MarkdownShortcut > update > 7');
+
     if (match && match[0].length === anchorOffset) {
+      console.log('MarkdownShortcut > update > 8', match);
+
       const nextSiblings = anchorNode.getNextSiblings();
       const [leadingNode, remainderNode] = anchorNode.splitText(anchorOffset);
       leadingNode.remove();
@@ -355,6 +360,8 @@ export function registerMarkdownShortcuts(
     anchorNode: TextNode,
     anchorOffset: number,
   ) => {
+    console.log('MarkdownShortcut > update > 5');
+
     if (
       runElementTransformers(
         parentNode,
@@ -363,6 +370,8 @@ export function registerMarkdownShortcuts(
         byType.element,
       )
     ) {
+      console.log('MarkdownShortcut > update > 5.5 good');
+
       return;
     }
 
@@ -385,6 +394,7 @@ export function registerMarkdownShortcuts(
 
   return editor.registerUpdateListener(
     ({tags, dirtyLeaves, editorState, prevEditorState}) => {
+      console.log('MarkdownShortcut > update > 1');
       // Ignore updates from collaboration and undo/redo (as changes already calculated)
       if (tags.has('collaboration') || tags.has('historic')) {
         return;
@@ -419,7 +429,11 @@ export function registerMarkdownShortcuts(
         return;
       }
 
+      console.log('MarkdownShortcut > update > 2');
+
       editor.update(() => {
+        console.log('MarkdownShortcut > update > 3');
+
         // Markdown is not available inside code
         if (anchorNode.hasFormat('code')) {
           return;
@@ -430,6 +444,8 @@ export function registerMarkdownShortcuts(
         if (parentNode === null || $isCodeNode(parentNode)) {
           return;
         }
+
+        console.log('MarkdownShortcut > update > 4');
 
         $transform(parentNode, anchorNode, selection.anchor.offset);
       });
